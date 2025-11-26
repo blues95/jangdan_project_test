@@ -8,85 +8,43 @@
     <script src="https://unpkg.com/@jspsych/plugin-preload@1.1.3"></script>
     <script src="https://unpkg.com/@jspsych/plugin-html-button-response@1.1.3"></script>
     <script src="https://unpkg.com/@jspsych/plugin-survey-html-form@1.0.3"></script>
+    
+    <script src="https://unpkg.com/@jspsych-contrib/plugin-pipe"></script>
 
     <style>
-      /* 전체 페이지 스타일 */
-      body {
-        font-family: 'Noto Sans KR', sans-serif; /* 한글 폰트 권장 */
-      }
-      .jspsych-content {
-        max-width: 800px; /* 전체 폭 제한 */
-        margin: auto;
-      }
-
-      /* 질문 박스 (카드 형태) 디자인 */
+      /* 스타일은 기존과 동일하게 유지 */
+      body { font-family: 'Noto Sans KR', sans-serif; }
+      .jspsych-content { max-width: 800px; margin: auto; }
       .question-box {
-        background: #fff;
-        border: 1px solid #e0e0e0;
-        border-radius: 8px;
-        padding: 30px;
-        margin-bottom: 25px; /* 질문 사이의 간격 */
-        box-shadow: 0 4px 6px rgba(0,0,0,0.05); /* 부드러운 그림자 */
-        text-align: left;
+        background: #fff; border: 1px solid #e0e0e0; border-radius: 8px;
+        padding: 30px; margin-bottom: 25px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); text-align: left;
       }
-
-      .question-text {
-        font-size: 1.1em;
-        font-weight: bold;
-        color: #333;
-        margin-bottom: 20px;
-        display: block;
-      }
-
-      /* 슬라이더 영역 */
-      .slider-wrapper {
-        padding: 0 10px;
-      }
-
-      input[type=range] {
-        width: 100%;
-        cursor: pointer;
-        margin: 15px 0;
-      }
-
-      /* 슬라이더 라벨 (양 끝 정렬) */
-      .slider-labels {
-        display: flex;
-        justify-content: space-between;
-        font-size: 0.9em;
-        color: #666;
-      }
-
-      /* 오디오 플레이어 영역 */
-      .audio-section {
-        background-color: #f8f9fa;
-        padding: 20px;
-        border-radius: 10px;
-        margin-bottom: 40px;
-        text-align: center;
-        border: 1px solid #eee;
-      }
+      .question-text { font-size: 1.1em; font-weight: bold; margin-bottom: 20px; display: block; }
+      .slider-wrapper { padding: 0 10px; }
+      input[type=range] { width: 100%; cursor: pointer; margin: 15px 0; }
+      .slider-labels { display: flex; justify-content: space-between; font-size: 0.9em; color: #666; }
+      .audio-section { background-color: #f8f9fa; padding: 20px; border-radius: 10px; margin-bottom: 40px; text-align: center; border: 1px solid #eee; }
     </style>
   </head>
   <body></body>
   <script>
 
-    const jsPsych = initJsPsych({
-      on_finish: function() {
-        // 로컬 테스트용 저장 (온라인 배포 시에는 작동하지 않음)
-        jsPsych.data.get().localSave('csv', 'my_experiment_data.csv');
-      }
-    });
+    const jsPsych = initJsPsych();
 
     var timeline = [];
 
-    // 1. 실험 자극 목록 (업데이트 됨)
+    // [중요] DataPipe용 랜덤 ID 및 파일명 생성
+    // 참여자마다 다른 파일명으로 저장하기 위함입니다.
+    const subject_id = jsPsych.randomization.randomID(10);
+    const filename = `${subject_id}.csv`;
+
+    // 1. 실험 자극
     var audio_stimuli = [
       { stimulus: "stimuli/02_-1.mp3", id: "02_-1" },
       { stimulus: "stimuli/32_shigimsae.mp3", id: "32_shigimsae" }
     ];
 
-    // 2. Preload: 오디오 파일 미리 로딩
+    // 2. Preload
     var preload = {
       type: jsPsychPreload,
       audio: audio_stimuli.map(s => s.stimulus)
@@ -99,25 +57,22 @@
       stimulus: `
         <div style="text-align: left; background: #fff; padding: 20px; border-radius:8px; border: 1px solid #ddd;">
           <h3>실험 안내</h3>
-          <p>본 실험에 참여해 주셔서 감사합니다.</p>
-          <p>1. 각 시행마다 <strong>재생 버튼[▶]</strong>을 눌러 리듬을 들어주세요.</p>
-          <p>2. 리듬은 원하는 만큼 <strong>반복해서 청취</strong>하실 수 있습니다.</p>
-          <p>3. 청취 후, 두 가지 질문에 대해 슬라이더를 움직여 응답해 주세요.</p>
-          <p>준비가 되셨다면 아래 버튼을 눌러 시작해 주세요.</p>
+          <p>참여해 주셔서 감사합니다.</p>
+          <p>각 시행마다 리듬을 자유롭게 듣고 두 가지 질문에 답해 주세요.</p>
         </div>
       `,
       choices: ['실험 시작하기']
     };
     timeline.push(instructions);
 
-    // 4. 메인 실험 트라이얼 (오디오 + 슬라이더 2개)
+    // 4. 메인 트라이얼
     var trial = {
       type: jsPsychSurveyHtmlForm,
       preamble: function() {
         var current_audio = jsPsych.timelineVariable('stimulus');
         return `
           <div class="audio-section">
-            <p style="margin-bottom:10px;">🎧 아래 재생 버튼을 눌러 리듬을 들어보세요</p>
+            <p>🎧 재생 버튼을 눌러 들어보세요</p>
             <audio controls controlsList="nodownload" src="${current_audio}" style="width: 100%; max-width: 400px;"></audio>
           </div>
         `;
@@ -125,56 +80,52 @@
       html: `
         <div class="question-box">
           <label class="question-text" for="groove">1. 이 장단이 얼마나 몸을 움직이고 싶게 했나요?</label>
-          
           <div class="slider-wrapper">
             <input type="range" id="groove" name="groove_rating" min="0" max="100" value="50" step="1">
-            
-            <div class="slider-labels">
-              <span style="text-align: left;">0<br>(전혀 그렇지 않다)</span>
-              <span style="text-align: right;">100<br>(매우 그렇다)</span>
-            </div>
+            <div class="slider-labels"><span>0<br>(전혀)</span><span>100<br>(매우)</span></div>
           </div>
         </div>
-
         <div class="question-box">
           <label class="question-text" for="pleasure">2. 이 장단을 들으며 얼마나 즐거움을 느꼈습니까?</label>
-          
           <div class="slider-wrapper">
             <input type="range" id="pleasure" name="pleasure_rating" min="0" max="100" value="50" step="1">
-            
-            <div class="slider-labels">
-              <span style="text-align: left;">0<br>(전혀 그렇지 않다)</span>
-              <span style="text-align: right;">100<br>(매우 그렇다)</span>
-            </div>
+            <div class="slider-labels"><span>0<br>(전혀)</span><span>100<br>(매우)</span></div>
           </div>
         </div>
       `,
       button_label: '다음',
-      data: {
-        stim_id: jsPsych.timelineVariable('id') // 데이터에 파일 ID 저장
-      }
+      data: { stim_id: jsPsych.timelineVariable('id') }
     };
 
     var test_procedure = {
       timeline: [trial],
       timeline_variables: audio_stimuli,
-      randomize_order: true // 자극 제시 순서 무작위
+      randomize_order: true
     };
     timeline.push(test_procedure);
 
-    // 5. 종료 화면
+    // [중요] 5. DataPipe 저장 단계
+    const save_data = {
+      type: jsPsychPipe,
+      action: "save",
+      experiment_id: "9h8uHWnmjGTc", // 사용자분의 실험 ID
+      filename: filename,
+      data_string: ()=>jsPsych.data.get().csv()
+    };
+    timeline.push(save_data);
+
+    // 6. 종료 화면 (저장이 완료된 후 보여짐)
     var end_screen = {
       type: jsPsychHtmlButtonResponse,
       stimulus: `
         <h3>실험 종료</h3>
-        <p>모든 과정이 끝났습니다. 수고하셨습니다.</p>
-        <p>아래 버튼을 누르면 데이터가 저장됩니다.</p>
+        <p>데이터가 안전하게 저장되었습니다.</p>
+        <p>참여해 주셔서 감사합니다.</p>
       `,
-      choices: ['데이터 저장 및 종료']
+      choices: ['창 닫기']
     };
     timeline.push(end_screen);
 
-    // 타임라인 실행
     jsPsych.run(timeline);
 
   </script>
