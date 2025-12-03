@@ -648,7 +648,8 @@
         action: "save",
         experiment_id: "9h8uHWnmjGTc", // ★ 사용자분의 DataPipe 실험 ID로 변경 필요 ★
         filename: filename,
-        data_string: ()=>jsPsych.data.get().csv()
+        // [수정] OSF 저장 시 한글 깨짐 방지를 위해 BOM(\uFEFF) 문자 추가
+        data_string: () => "\uFEFF" + jsPsych.data.get().csv()
     };
     timeline.push(save_data);
 
