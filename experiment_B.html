@@ -244,7 +244,7 @@
 
     // [중요] DataPipe용 랜덤 ID 생성
     const subject_id = jsPsych.randomization.randomID(10);
-    const filename = `${subject_id}.csv`;
+    const filename = `expB_${subject_id}.csv`;
     
     // 데이터에 subject_id 추가 (모든 행에 기록됨)
     jsPsych.data.addProperties({
