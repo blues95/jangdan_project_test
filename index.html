@@ -59,7 +59,43 @@
             display: block;
         }
 
-        /* --- Page 2: Eligibility Check Styles (Fixed) --- */
+        /* --- PDF Viewer & Consent Styles (New) --- */
+        .pdf-box {
+            width: 100%;
+            height: 60vh; /* 화면 높이의 60% */
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 15px 0;
+        }
+        .pdf-box iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+        .consent-text {
+            font-size: 0.95em;
+            margin-bottom: 10px;
+            color: #444;
+        }
+        .consent-section-title {
+            font-weight: bold;
+            font-size: 1.05em;
+            margin-top: 20px;
+            margin-bottom: 5px;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 5px;
+        }
+        .consent-input-row {
+            margin: 10px 0;
+        }
+        .consent-input-row label {
+            display: inline-block;
+            min-width: 120px;
+            font-weight: bold;
+        }
+
+        /* --- Page 2: Eligibility Check Styles --- */
         .jspsych-survey-multi-choice-question {
             text-align: center;
             margin-top: 20px;
@@ -77,7 +113,6 @@
             font-weight: bold;
         }
 
-        /* 선택지 가로 정렬 (Inline-Flex) */
         .jspsych-survey-multi-choice-option {
             display: inline-flex !important; 
             align-items: center;
@@ -105,7 +140,6 @@
             margin-top: 10px;
             width: 100%;
         }
-        
         .likert-label-side {
             font-size: 0.9em;
             font-weight: bold;
@@ -116,14 +150,12 @@
             flex-shrink: 0; 
             text-align: center; 
         }
-
         .likert-options-group {
             display: flex;
             justify-content: space-between;
             flex-grow: 1; 
             margin: 0 10px;
         }
-        
         .likert-option {
             display: flex;
             flex-direction: column;
@@ -131,14 +163,12 @@
             position: relative;
             width: 100%; 
         }
-        
         .likert-num {
             font-size: 0.85em;
             color: #666;
             margin-bottom: 8px;
             font-weight: bold;
         }
-        
         .likert-option input[type="radio"] {
             margin: 0;
             width: 20px; 
@@ -172,15 +202,12 @@
             background: #4a90e2; 
             cursor: pointer;
         }
-
-        /* 슬라이더 라벨 */
         .slider-labels-container {
             position: relative;
             width: 100%;
             height: 40px; 
             margin-top: 5px;
         }
-        
         .slider-label-item {
             display: flex;
             flex-direction: column;
@@ -190,17 +217,14 @@
             white-space: nowrap; 
             text-align: center;
         }
-        
         .slider-label-left {
             left: 0;
             transform: translateX(-50%);
         }
-
         .slider-label-right {
             right: 0;
             transform: translateX(50%);
         }
-
         .slider-num-bold {
             font-size: 1.1em;
             font-weight: bold;
@@ -219,7 +243,6 @@
             box-shadow: 0 4px 6px rgba(0,0,0,0.05);
         }
         
-        /* 진행률 텍스트 스타일 */
         .progress-text {
             text-align: right;
             color: #666;
@@ -244,7 +267,7 @@
 
     // [중요] DataPipe용 랜덤 ID 생성
     const subject_id = jsPsych.randomization.randomID(10);
-    const filename = `${subject_id}.csv`;
+    const filename = `expA_${subject_id}.csv`;
     
     // 데이터에 subject_id 추가 (모든 행에 기록됨)
     jsPsych.data.addProperties({
@@ -257,58 +280,84 @@
     // --- 본 실험 자극 목록 (Experiment A) ---
     var main_stimuli = [
         { stimulus: "stimuli/original/01_3_ori.mp3", type: "original" },
-        { stimulus: "stimuli/original/04_66_ori.mp3", type: "original" },
+        { stimulus: "stimuli/original/03_1_ori.mp3", type: "original" },
+        { stimulus: "stimuli/original/05_-1_ori.mp3", type: "original" },
         { stimulus: "stimuli/original/07_44_ori.mp3", type: "original" },
-        { stimulus: "stimuli/original/10_29_ori.mp3", type: "original" },
+        { stimulus: "stimuli/original/09_19_ori.mp3", type: "original" },
+        { stimulus: "stimuli/original/11_-1_ori.mp3", type: "original" },
         { stimulus: "stimuli/original/13_-1_ori.mp3", type: "original" },
-        { stimulus: "stimuli/original/16_-1_ori.mp3", type: "original" },
+        { stimulus: "stimuli/original/15_61_ori.mp3", type: "original" },
+        { stimulus: "stimuli/original/17_-1_ori.mp3", type: "original" },
         { stimulus: "stimuli/original/19_-1_ori.mp3", type: "original" },
-        { stimulus: "stimuli/original/22_26_ori.mp3", type: "original" },
+        { stimulus: "stimuli/original/21_23_ori.mp3", type: "original" },
+        { stimulus: "stimuli/original/23_42_ori.mp3", type: "original" },
         { stimulus: "stimuli/original/25_-1_ori.mp3", type: "original" },
-        { stimulus: "stimuli/original/28_39_ori.mp3", type: "original" },
+        { stimulus: "stimuli/original/27_43_ori.mp3", type: "original" },
+        { stimulus: "stimuli/original/29_-1_ori.mp3", type: "original" },
         { stimulus: "stimuli/original/31_51_ori.mp3", type: "original" },
-        { stimulus: "stimuli/original/34_48_ori.mp3", type: "original" },
+        { stimulus: "stimuli/original/33_41_ori.mp3", type: "original" },
+        { stimulus: "stimuli/original/35_53_ori.mp3", type: "original" },
         { stimulus: "stimuli/original/37_54_ori.mp3", type: "original" },
-        { stimulus: "stimuli/original/40_67_ori.mp3", type: "original" },
-        { stimulus: "stimuli/quantized/03_1_quantized_velocity82.mp3", type: "quantized" },
-        { stimulus: "stimuli/quantized/06_-1_quantized_velocity82.mp3", type: "quantized" },
-        { stimulus: "stimuli/quantized/09_19_quantized_velocity82.mp3", type: "quantized" },
-        { stimulus: "stimuli/quantized/12_-1_quantized_velocity82.mp3", type: "quantized" },
-        { stimulus: "stimuli/quantized/15_-1_quantized_velocity82.mp3", type: "quantized" },
-        { stimulus: "stimuli/quantized/18_65_quantized_velocity82.mp3", type: "quantized" },
-        { stimulus: "stimuli/quantized/21_23_quantized_velocity82.mp3", type: "quantized" },
-        { stimulus: "stimuli/quantized/24_35_quantized_velocity82.mp3", type: "quantized" },
-        { stimulus: "stimuli/quantized/27_43_quantized_velocity82.mp3", type: "quantized" },
-        { stimulus: "stimuli/quantized/30_49_quantized_velocity82.mp3", type: "quantized" },
-        { stimulus: "stimuli/quantized/33_41_quantized_velocity82.mp3", type: "quantized" },
-        { stimulus: "stimuli/quantized/36_45_quantized_velocity82.mp3", type: "quantized" },
-        { stimulus: "stimuli/quantized/39_60_quantized_velocity82.mp3", type: "quantized" },
-        { stimulus: "stimuli/shigimsae/1_shigimsae.mp3", type: "shigimsae" },
+        { stimulus: "stimuli/original/39_60_ori.mp3", type: "original" },
+        { stimulus: "stimuli/quantized/01_3_quantized_velocity50.mp3", type: "quantized" },
+        { stimulus: "stimuli/quantized/03_1_quantized_velocity50.mp3", type: "quantized" },
+        { stimulus: "stimuli/quantized/05_-1_quantized_velocity50.mp3", type: "quantized" },
+        { stimulus: "stimuli/quantized/07_44_quantized_velocity50.mp3", type: "quantized" },
+        { stimulus: "stimuli/quantized/09_19_quantized_velocity50.mp3", type: "quantized" },
+        { stimulus: "stimuli/quantized/11_-1_quantized_velocity50.mp3", type: "quantized" },
+        { stimulus: "stimuli/quantized/13_-1_quantized_velocity50.mp3", type: "quantized" },
+        { stimulus: "stimuli/quantized/15_61_quantized_velocity50.mp3", type: "quantized" },
+        { stimulus: "stimuli/quantized/17_-1_quantized_velocity50.mp3", type: "quantized" },
+        { stimulus: "stimuli/quantized/19_-1_quantized_velocity50.mp3", type: "quantized" },
+        { stimulus: "stimuli/quantized/21_23_quantized_velocity50.mp3", type: "quantized" },
+        { stimulus: "stimuli/quantized/23_42_quantized_velocity50.mp3", type: "quantized" },
+        { stimulus: "stimuli/quantized/25_-1_quantized_velocity50.mp3", type: "quantized" },
+        { stimulus: "stimuli/quantized/27_43_quantized_velocity50.mp3", type: "quantized" },
+        { stimulus: "stimuli/quantized/29_-1_quantized_velocity50.mp3", type: "quantized" },
+        { stimulus: "stimuli/quantized/31_51_quantized_velocity50.mp3", type: "quantized" },
+        { stimulus: "stimuli/quantized/33_41_quantized_velocity50.mp3", type: "quantized" },
+        { stimulus: "stimuli/quantized/35_53_quantized_velocity50.mp3", type: "quantized" },
+        { stimulus: "stimuli/quantized/37_54_quantized_velocity50.mp3", type: "quantized" },
+        { stimulus: "stimuli/quantized/39_60_quantized_velocity50.mp3", type: "quantized" },
+        { stimulus: "stimuli/shigimsae/19_shigimsae.mp3", type: "shigimsae" },
+        { stimulus: "stimuli/shigimsae/20_shigimsae.mp3", type: "shigimsae" },
         { stimulus: "stimuli/shigimsae/26_shigimsae.mp3", type: "shigimsae" },
-        { stimulus: "stimuli/shigimsae/33_shigimsae.mp3", type: "shigimsae" },
+        { stimulus: "stimuli/shigimsae/32_shigimsae.mp3", type: "shigimsae" },
+        { stimulus: "stimuli/shigimsae/35_shigimsae.mp3", type: "shigimsae" },
         { stimulus: "stimuli/shigimsae/3_shigimsae.mp3", type: "shigimsae" },
-        { stimulus: "stimuli/shigimsae/43_shigimsae.mp3", type: "shigimsae" },
+        { stimulus: "stimuli/shigimsae/42_shigimsae.mp3", type: "shigimsae" },
+        { stimulus: "stimuli/shigimsae/44_shigimsae.mp3", type: "shigimsae" },
         { stimulus: "stimuli/shigimsae/48_shigimsae.mp3", type: "shigimsae" },
-        { stimulus: "stimuli/shigimsae/53_shigimsae.mp3", type: "shigimsae" },
+        { stimulus: "stimuli/shigimsae/51_shigimsae.mp3", type: "shigimsae" },
+        { stimulus: "stimuli/shigimsae/54_shigimsae.mp3", type: "shigimsae" },
         { stimulus: "stimuli/shigimsae/59_shigimsae.mp3", type: "shigimsae" },
-        { stimulus: "stimuli/shigimsae/65_shigimsae.mp3", type: "shigimsae" },
-        { stimulus: "stimuli/drum_stimuli/jangdan_drum_01_80bpm.mp3", type: "drum" },
-        { stimulus: "stimuli/drum_stimuli/jangdan_drum_04_80bpm.mp3", type: "drum" },
-        { stimulus: "stimuli/drum_stimuli/jangdan_drum_07_80bpm.mp3", type: "drum" },
-        { stimulus: "stimuli/drum_stimuli/jangdan_drum_10_80bpm.mp3", type: "drum" },
-        { stimulus: "stimuli/drum_stimuli/jangdan_drum_13_80bpm.mp3", type: "drum" },
-        { stimulus: "stimuli/drum_stimuli/jangdan_drum_16_80bpm.mp3", type: "drum" },
-        { stimulus: "stimuli/drum_stimuli/jangdan_drum_19_80bpm.mp3", type: "drum" },
-        { stimulus: "stimuli/drum_stimuli/jangdan_drum_22_80bpm.mp3", type: "drum" },
-        { stimulus: "stimuli/drum_stimuli/jangdan_drum_25_80bpm.mp3", type: "drum" },
-        { stimulus: "stimuli/drum_stimuli/jangdan_drum_28_80bpm.mp3", type: "drum" },
-        { stimulus: "stimuli/drum_stimuli/jangdan_drum_31_80bpm.mp3", type: "drum" },
-        { stimulus: "stimuli/drum_stimuli/jangdan_drum_34_80bpm.mp3", type: "drum" },
-        { stimulus: "stimuli/drum_stimuli/jangdan_drum_37_80bpm.mp3", type: "drum" },
-        { stimulus: "stimuli/drum_stimuli/jangdan_drum_40_80bpm.mp3", type: "drum" },
-        { stimulus: "stimuli/drum_stimuli/jangdan_drum_43_80bpm.mp3", type: "drum" },
-        { stimulus: "stimuli/drum_stimuli/jangdan_drum_46_80bpm.mp3", type: "drum" },
-        { stimulus: "stimuli/drum_stimuli/jangdan_drum_49_80bpm.mp3", type: "drum" }
+        { stimulus: "stimuli/shigimsae/61_shigimsae.mp3", type: "shigimsae" },
+        { stimulus: "stimuli/shigimsae/66_shigimsae.mp3", type: "shigimsae" },
+        { stimulus: "stimuli/drum_stimuli/80bpm/jangdan_drum_01_80bpm.mp3", type: "drum" },
+        { stimulus: "stimuli/drum_stimuli/80bpm/jangdan_drum_03_80bpm.mp3", type: "drum" },
+        { stimulus: "stimuli/drum_stimuli/80bpm/jangdan_drum_05_80bpm.mp3", type: "drum" },
+        { stimulus: "stimuli/drum_stimuli/80bpm/jangdan_drum_07_80bpm.mp3", type: "drum" },
+        { stimulus: "stimuli/drum_stimuli/80bpm/jangdan_drum_09_80bpm.mp3", type: "drum" },
+        { stimulus: "stimuli/drum_stimuli/80bpm/jangdan_drum_11_80bpm.mp3", type: "drum" },
+        { stimulus: "stimuli/drum_stimuli/80bpm/jangdan_drum_13_80bpm.mp3", type: "drum" },
+        { stimulus: "stimuli/drum_stimuli/80bpm/jangdan_drum_15_80bpm.mp3", type: "drum" },
+        { stimulus: "stimuli/drum_stimuli/80bpm/jangdan_drum_17_80bpm.mp3", type: "drum" },
+        { stimulus: "stimuli/drum_stimuli/80bpm/jangdan_drum_19_80bpm.mp3", type: "drum" },
+        { stimulus: "stimuli/drum_stimuli/80bpm/jangdan_drum_21_80bpm.mp3", type: "drum" },
+        { stimulus: "stimuli/drum_stimuli/80bpm/jangdan_drum_23_80bpm.mp3", type: "drum" },
+        { stimulus: "stimuli/drum_stimuli/80bpm/jangdan_drum_25_80bpm.mp3", type: "drum" },
+        { stimulus: "stimuli/drum_stimuli/80bpm/jangdan_drum_27_80bpm.mp3", type: "drum" },
+        { stimulus: "stimuli/drum_stimuli/80bpm/jangdan_drum_29_80bpm.mp3", type: "drum" },
+        { stimulus: "stimuli/drum_stimuli/80bpm/jangdan_drum_31_80bpm.mp3", type: "drum" },
+        { stimulus: "stimuli/drum_stimuli/80bpm/jangdan_drum_33_80bpm.mp3", type: "drum" },
+        { stimulus: "stimuli/drum_stimuli/80bpm/jangdan_drum_35_80bpm.mp3", type: "drum" },
+        { stimulus: "stimuli/drum_stimuli/80bpm/jangdan_drum_37_80bpm.mp3", type: "drum" },
+        { stimulus: "stimuli/drum_stimuli/80bpm/jangdan_drum_39_80bpm.mp3", type: "drum" },
+        { stimulus: "stimuli/drum_stimuli/80bpm/jangdan_drum_41_80bpm.mp3", type: "drum" },
+        { stimulus: "stimuli/drum_stimuli/80bpm/jangdan_drum_43_80bpm.mp3", type: "drum" },
+        { stimulus: "stimuli/drum_stimuli/80bpm/jangdan_drum_45_80bpm.mp3", type: "drum" },
+        { stimulus: "stimuli/drum_stimuli/80bpm/jangdan_drum_47_80bpm.mp3", type: "drum" },
+        { stimulus: "stimuli/drum_stimuli/80bpm/jangdan_drum_49_80bpm.mp3", type: "drum" }
     ];
 
     // 연습 파일 제거하고 본 실험 파일만 로드
@@ -323,6 +372,151 @@
         continue_after_error: true
     };
     timeline.push(preload);
+
+    // ==========================================
+    // [추가] 동의서 및 안내 (Consent & Intro)
+    // ==========================================
+
+    // 1-0. 시작 안내 화면
+    var intro_screen = {
+        type: jsPsychHtmlButtonResponse,
+        stimulus: `
+            <div class="question-box" style="text-align:center;">
+                <h2>리듬 및 그루브 지각 실험 안내</h2>
+                <div style="text-align:left; margin-top:16px; line-height:1.7; font-size:1.05em;">
+                    <p>안녕하세요! 본 실험에 관심 가져 주셔서 감사합니다.</p>
+                    <p>이 실험에서는 다양한 리듬을 듣고, 각 리듬에 대한 느낌을 평가하게 됩니다.</p>
+                    <hr style="margin: 20px 0; border: 0; border-top: 1px solid #eee;">
+                    <p>본 실험에 참여하시기 위해서는, 다음 두 가지 동의서에 대한 내용을 읽고 동의 여부를 선택해 주셔야 합니다.</p>
+                    <ul style="line-height:1.8;">
+                        <li><strong>① 인간대상 연구피험자 동의서</strong></li>
+                        <li><strong>② 사례비 지급을 위한 개인정보 수집 및 활용 동의서</strong></li>
+                    </ul>
+                    <p style="margin-top:15px; color:#d9534f; font-weight:bold;">
+                        두 동의서 모두에 동의하셔야만 본 실험에 참여하실 수 있으며,<br>
+                        동의하지 않으시는 경우 실험이 즉시 종료됩니다.
+                    </p>
+                </div>
+            </div>
+        `,
+        choices: ["다음 (동의서 확인)"]
+    };
+    timeline.push(intro_screen);
+
+    // 1-1. 동의서 1: 인간대상 연구피험자 동의서
+    var consent_human = {
+        type: jsPsychSurveyHtmlForm,
+        preamble: `
+            <div class="question-box">
+                <h3 style="text-align:center;">인간대상 연구피험자 동의서</h3>
+                <p class="consent-text">
+                    먼저, 아래의 <strong>인간대상 연구피험자 동의서 전문(PDF)</strong>을 스크롤하여 끝까지 읽어주세요.
+                </p>
+                <div class="pdf-box">
+                    <iframe src="documents/experiment_consent.pdf"></iframe>
+                </div>
+                <p class="consent-text" style="font-size:13px; color:#666; text-align:center;">
+                    ※ 화면이 안 보이면 <a href="documents/experiment_consent.pdf" target="_blank">여기</a>를 눌러 확인해 주세요.
+                </p>
+                <hr style="margin: 20px 0; border: 0; border-top: 1px solid #eee;">
+                <p class="consent-text" style="font-weight:bold;">
+                    위 내용을 충분히 숙지하셨다면, 아래 동의 여부를 선택해 주세요.
+                </p>
+            </div>
+        `,
+        html: `
+            <div class="question-box">
+                <div class="consent-section-title" style="font-weight:bold; margin-bottom:10px;">[연구 참여 동의]</div>
+                <label style="display:block; margin-bottom:10px;">
+                    <input type="radio" name="human_consent" value="agree" required>
+                    동의합니다. (실험 참여)
+                </label>
+                <label style="display:block;">
+                    <input type="radio" name="human_consent" value="disagree">
+                    동의하지 않습니다. (실험 종료)
+                </label>
+            </div>
+        `,
+        button_label: "다음",
+        on_finish: function(data){
+            var responses = data.response;
+            if(responses.human_consent === 'disagree'){
+                jsPsych.endExperiment("동의하지 않으셔서 실험을 종료합니다. 참여해 주셔서 감사합니다.");
+            }
+        }
+    };
+    timeline.push(consent_human);
+
+    // 1-2. 동의서 2: 개인정보 수집 이용 동의서
+    var consent_payment = {
+        type: jsPsychSurveyHtmlForm,
+        preamble: `
+            <div class="question-box">
+                <h3 style="text-align:center;">개인정보 수집 및 활용 동의서</h3>
+                <p class="consent-text">
+                    다음은 사례비 지급 등을 위한 <strong>개인정보 수집 및 활용 동의서</strong>입니다.<br>
+                    아래 내용을 확인해 주세요.
+                </p>
+                <div class="pdf-box">
+                    <iframe src="documents/personal_info_consent.pdf"></iframe>
+                </div>
+                <p class="consent-text" style="font-size:13px; color:#666; text-align:center;">
+                    ※ 화면이 안 보이면 <a href="documents/personal_info_consent.pdf" target="_blank">여기</a>를 눌러 확인해 주세요.
+                </p>
+            </div>
+        `,
+        html: `
+            <div class="question-box">
+                <div class="consent-section-title" style="font-weight:bold; margin-bottom:10px;">[개인정보 수집 동의]</div>
+                <label style="display:block; margin-bottom:10px;">
+                    <input type="radio" name="privacy_consent" value="agree" required>
+                    동의합니다.
+                </label>
+                <label style="display:block; margin-bottom:20px;">
+                    <input type="radio" name="privacy_consent" value="disagree">
+                    동의하지 않습니다.
+                </label>
+
+                <hr style="margin: 20px 0; border: 0; border-top: 1px solid #eee;">
+
+                <div class="consent-section-title" style="font-weight:bold; margin-bottom:10px;">[개인정보 입력]</div>
+                <p style="font-size:0.9em; color:#666; margin-bottom:15px;">
+                    * 사례비 지급을 위해 정확한 정보를 입력해 주세요.<br>
+                    * 수집된 정보는 사례비 지급 목적 외에는 사용되지 않으며, 목적 달성 후 파기됩니다.
+                </p>
+                
+                <div class="consent-input-row">
+                    <label>성명 :</label>
+                    <input type="text" name="pay_name" required>
+                </div>
+                <div class="consent-input-row">
+                    <label>연락처 :</label>
+                    <input type="text" name="pay_phone" placeholder="010-0000-0000" required>
+                </div>
+                <div class="consent-input-row">
+                    <label>주민등록번호 :</label>
+                    <input type="text" name="pay_rrn" placeholder="13자리 (외부인 필수)" required>
+                </div>
+                <div class="consent-input-row">
+                    <label>은행명 / 계좌번호 :</label>
+                    <input type="text" name="pay_bank" placeholder="예: 카카오뱅크 3333-00-0000000" required style="width: 250px;">
+                </div>
+                <div class="consent-input-row">
+                    <label>주소 (동까지) :</label>
+                    <input type="text" name="pay_addr" required style="width: 250px;">
+                </div>
+            </div>
+        `,
+        button_label: "제출하고 실험 계속하기",
+        on_finish: function(data){
+            var responses = data.response;
+            if(responses.privacy_consent === 'disagree'){
+                jsPsych.endExperiment("개인정보 수집에 동의하지 않으셔서 실험을 진행할 수 없습니다. 참여해 주셔서 감사합니다.");
+            }
+        }
+    };
+    timeline.push(consent_payment);
+
 
     // --- Page 1: 기본 인적사항 ---
     var page_1_demographics = {
