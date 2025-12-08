@@ -59,7 +59,64 @@
             display: block;
         }
 
-        /* --- Page 2: Eligibility Check Styles (Fixed) --- */
+        /* --- PDF Viewer & Consent Styles (Updated) --- */
+        .pdf-box {
+            width: 100%;
+            height: 60vh; 
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            overflow: auto; /* 스크롤 가능하게 */
+            margin: 12px 0 8px;
+        }
+        .pdf-box iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+        .consent-text {
+            font-size: 13px;
+            margin-bottom: 8px;
+            line-height: 1.6;
+            color: #333;
+        }
+        .consent-section-title {
+            font-weight: 600;
+            margin: 16px 0 4px;
+            font-size: 14px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 4px;
+        }
+        .consent-input-row {
+            margin: 6px 0;
+            font-size: 13px;
+        }
+        .consent-input-row label {
+            display: inline-block;
+            min-width: 190px;
+            font-weight: bold;
+        }
+        .consent-input-row input[type="text"] {
+            width: 60%;
+            max-width: 360px;
+            padding: 4px 6px;
+            font-size: 13px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+        }
+        
+        /* 반응형 처리 */
+        @media (max-width: 600px) {
+            .consent-input-row label {
+                display: block;
+                margin-bottom: 2px;
+            }
+            .consent-input-row input[type="text"] {
+                width: 95%;
+                max-width: 100%;
+            }
+        }
+
+        /* --- Page 2: Eligibility Check Styles --- */
         .jspsych-survey-multi-choice-question {
             text-align: center;
             margin-top: 20px;
@@ -77,7 +134,6 @@
             font-weight: bold;
         }
 
-        /* 선택지 가로 정렬 (Inline-Flex) */
         .jspsych-survey-multi-choice-option {
             display: inline-flex !important; 
             align-items: center;
@@ -105,7 +161,6 @@
             margin-top: 10px;
             width: 100%;
         }
-        
         .likert-label-side {
             font-size: 0.9em;
             font-weight: bold;
@@ -116,14 +171,12 @@
             flex-shrink: 0; 
             text-align: center; 
         }
-
         .likert-options-group {
             display: flex;
             justify-content: space-between;
             flex-grow: 1; 
             margin: 0 10px;
         }
-        
         .likert-option {
             display: flex;
             flex-direction: column;
@@ -131,14 +184,12 @@
             position: relative;
             width: 100%; 
         }
-        
         .likert-num {
             font-size: 0.85em;
             color: #666;
             margin-bottom: 8px;
             font-weight: bold;
         }
-        
         .likert-option input[type="radio"] {
             margin: 0;
             width: 20px; 
@@ -172,15 +223,12 @@
             background: #4a90e2; 
             cursor: pointer;
         }
-
-        /* 슬라이더 라벨 */
         .slider-labels-container {
             position: relative;
             width: 100%;
             height: 40px; 
             margin-top: 5px;
         }
-        
         .slider-label-item {
             display: flex;
             flex-direction: column;
@@ -190,17 +238,14 @@
             white-space: nowrap; 
             text-align: center;
         }
-        
         .slider-label-left {
             left: 0;
             transform: translateX(-50%);
         }
-
         .slider-label-right {
             right: 0;
             transform: translateX(50%);
         }
-
         .slider-num-bold {
             font-size: 1.1em;
             font-weight: bold;
@@ -219,7 +264,6 @@
             box-shadow: 0 4px 6px rgba(0,0,0,0.05);
         }
         
-        /* 진행률 텍스트 스타일 */
         .progress-text {
             text-align: right;
             color: #666;
@@ -229,7 +273,7 @@
         }
 
         .small-input { width: 80px; padding: 5px; }
-        input[type=text], select { padding: 8px; border: 1px solid #ccc; border-radius: 4px; }
+        select { padding: 8px; border: 1px solid #ccc; border-radius: 4px; }
         textarea { padding: 10px; border: 1px solid #ccc; border-radius: 4px; resize: vertical; width: 100%; box-sizing: border-box;}
     </style>
 </head>
@@ -309,7 +353,6 @@
         { stimulus: "stimuli/drum_stimuli/jangdan_drum_45_80bpm.mp3", type: "drum" },
         { stimulus: "stimuli/drum_stimuli/jangdan_drum_48_80bpm.mp3", type: "drum" }
     ];
-
     // 연습 파일 제거하고 본 실험 파일만 로드
     var all_audio = main_stimuli.map(a => a.stimulus);
 
@@ -322,6 +365,272 @@
         continue_after_error: true
     };
     timeline.push(preload);
+
+    // ==========================================
+    // [추가] 동의서 및 안내 (Consent & Intro)
+    // ==========================================
+
+    // 1-0. 시작 안내 화면
+    var intro_screen = {
+        type: jsPsychHtmlButtonResponse,
+        stimulus: `
+            <div class="question-box" style="text-align:center;">
+                <h1 class="main-title">리듬 및 그루브 지각 실험 안내</h1>
+                <div style="text-align:left; margin-top:16px; line-height:1.7;">
+                    <p>안녕하세요! 실험에 관심 가져 주셔서 감사합니다. 이 실험에서는 다양한 리듬을 듣고, 각 리듬에 대한 느낌과 지각을 평가하게 됩니다.</p>
+                    <p style="margin-top:10px;">본 실험에 참여하시기 위해서는, 다음 두 가지 동의서에 대한 내용을 읽고 동의 여부를 선택해 주셔야 합니다.</p>
+                    <ul style="line-height:1.7;">
+                        <li><strong>① 인간대상 연구피험자 동의서</strong></li>
+                        <li><strong>② (사례비 지급 등)을 위한 개인정보 수집 및 활용 동의서</strong></li>
+                    </ul>
+                    <p style="margin-top:8px;">
+                        두 동의서 모두에 <strong>동의</strong>하셔야만 본 행동실험에 참여하실 수 있으며,<br>
+                        동의하지 않으시는 경우 실험이 즉시 종료됩니다.
+                    </p>
+                    <p style="margin-top:8px;">
+                        다음 버튼을 누르시면, 먼저 ① 인간대상 연구피험자 동의서(PDF)를 확인하신 뒤<br>
+                        동의 여부 및 서명을 입력하는 화면으로 이동합니다.
+                    </p>
+                </div>
+            </div>
+        `,
+        choices: ["다음으로 (동의서 확인 시작)"]
+    };
+    timeline.push(intro_screen);
+
+    // 1-1. 동의서 1: 인간대상 연구피험자 동의서
+    var consent_human = {
+        type: jsPsychSurveyHtmlForm,
+        preamble: `
+            <div class="question-box">
+                <h1 class="main-title" style="text-align:center;">인간대상 연구피험자 동의서</h1>
+                <p class="consent-text">
+                    먼저, 아래의 <strong>인간대상 연구피험자 동의서 전문(PDF 파일)</strong>을 스크롤하여 끝까지 읽어주세요.
+                </p>
+                <div class="pdf-box">
+                    <iframe src="documents/experiment_consent.pdf"></iframe>
+                </div>
+                <p class="consent-text" style="font-size:12px; color:#666; text-align:center;">
+                    ※ 모바일에서 PDF가 한 페이지만 보이거나 스크롤이 되지 않을 경우,
+                    <a href="documents/experiment_consent.pdf" target="_blank">여기를 눌러 새 탭에서 전체 동의서를 확인</a>해 주세요.
+                </p>
+                <p class="consent-text">
+                    아래 문항들은 동의서 전문에서 <strong>피험자의 동의가 필요한 항목</strong>을 발췌한 것입니다.<br>
+                    각 항목을 읽고 현재 본인의 의견에 해당하는 선택지를 골라 주세요. 
+                    본 연구는 온라인으로 진행되므로, 응답을 제출하시면 본인은 전자적 방식(e-consent)으로 연구 참여 및 각 동의 항목에 동의하며, 
+                    이에 따라 연구자가 본 동의서의 동의 항목 및 서명란을 본인을 대신하여 기재하는 것에 동의한 것으로 간주됩니다.
+                </p>
+            </div>
+        `,
+        html: `
+            <div class="question-box">
+                <!-- 1) 개인정보 수집 동의 -->
+                <div class="consent-section-title">[개인정보 수집에 대한 사항 동의]</div>
+                <p class="consent-text">본인은 개인정보 수집에 대한 내용을 확인하였으며, 본 연구에서 개인정보 수집에 대하여</p>
+                <label style="display:block; margin-bottom:5px;">
+                    <input type="radio" name="human_main_collect" value="동의합니다" required>
+                    ▶ 동의합니다.
+                </label>
+                <label style="display:block;">
+                    <input type="radio" name="human_main_collect" value="동의하지 않습니다">
+                    ▶ 동의하지 않습니다.
+                </label>
+
+                <!-- 2) 개인정보 제공 범위 -->
+                <div class="consent-section-title">[개인정보의 제공에 관한 사항]</div>
+                <p class="consent-text">
+                    (타연구자에게 개인정보 제공이 있을 시) 본 연구에서 참여함으로써 수집되는 개인정보는 연주 MIDI 데이터, 실험 자극에 대한 설문 응답 자료, 피험자에 대한 설문자료(배경, 성향 등), 인터뷰 자료, 나이, 생년월일, 성별이며, 해당 정보는 귀하의 동의에 따라 보존 기간내 2차적 사용을 위해 제공될 수 있습니다. 연구자는 타연구자에게 개인정보제공을 제공하는 경우에는 KAIST 생명윤리심의위원회에 개인정보제공에 관하여 별도 심의를 받아야 합니다.
+                </p>
+                <label style="display:block; margin-bottom:5px;">
+                    <input type="radio" name="human_provide_scope" value="유사한 연구 범위 안에서만 제공 동의" required>
+                    ▶ 유사한 연구 범위 안에서만 제공하는 것에 동의합니다.
+                </label>
+                <label style="display:block; margin-bottom:5px;">
+                    <input type="radio" name="human_provide_scope" value="포괄적 연구 목적으로 제공 동의">
+                    ▶ 포괄적 연구 목적으로 제공하는 것에 동의합니다.
+                </label>
+                <label style="display:block;">
+                    <input type="radio" name="human_provide_scope" value="제공에 동의하지 않음">
+                    ▶ 동의하지 않습니다.
+                </label>
+
+                <!-- 3) 개인식별정보 포함 여부 -->
+                <div class="consent-section-title">[개인식별정보 포함 여부에 대한 동의]</div>
+                <p class="consent-text">
+                    귀하가 개인정보제공에 대하여 동의시, 해당 정보는 익명화하여 제3자에게 제공됩니다. 다만, 귀하가 개인식별정보를 포함하는 것에 동의한 경우에는 예외로 합니다.
+                </p>
+                <label style="display:block; margin-bottom:5px;">
+                    <input type="radio" name="human_identifiable" value="개인식별정보 포함 동의" required>
+                    ▶ 개인식별정보를 포함하는 것에 동의합니다.
+                </label>
+                <label style="display:block;">
+                    <input type="radio" name="human_identifiable" value="개인식별정보 포함 동의하지 않음">
+                    ▶ 동의하지 않습니다.
+                </label>
+
+                <!-- 4) 새로운 정보 통보 여부 -->
+                <div class="consent-section-title">[연구 관련 새로운 정보 통보 여부]</div>
+                <p class="consent-text">
+                    본 연구진행 중 본인에게 영향을 줄 수도 있는 새로운 정보를 연구자가 획득 시 그 내용을 통보 받을 수 있습니다.
+                </p>
+                <label style="display:block; margin-bottom:5px;">
+                    <input type="radio" name="human_notify" value="통보를 원함" required>
+                    ▶ 통보를 원합니다.
+                </label>
+                <label style="display:block;">
+                    <input type="radio" name="human_notify" value="통보를 원치 않음">
+                    ▶ 통보를 원치 않습니다.
+                </label>
+
+                <!-- 5) 서명 및 기본 정보 입력 -->
+                <div class="consent-section-title" style="margin-top:20px;">[본인 확인 및 서명]</div>
+                <p class="consent-text">
+                    본인은 이 동의서를 읽고 이해하였으며 모든 질문에 대한 답변을 들었습니다. 이에 본인은 자발적으로 본 연구에 참여함을 서명으로 확인합니다.
+                </p>
+                <p class="consent-text">
+                    또한, 본인은 <br>
+                    1. 본인과 연구자 및 KAIST 사이에 본인의 연구 참여결정에 영향을 줄 수 있는 어떠한 관계도 없고, <br>
+                    2. 요양원 같은 수용 시설에 거주하거나, 인지 기능에 문제가 있지 아니하며, <br>
+                    3. 만약, 위에 열거한 1, 2의 상황에 해당되는 경우 생명윤리심의위원회 간사의 입회하에 본 동의서에 대한 설명을 듣고 아래 서명을 하였음을 확인합니다.
+                </p>
+
+                <div class="consent-input-row">
+                    <label>주소 (동까지만 쓰셔도 됩니다) :</label>
+                    <input type="text" name="human_addr" required>
+                </div>
+                <div class="consent-input-row">
+                    <label>연락처 :</label>
+                    <input type="text" name="human_phone" required>
+                </div>
+                <div class="consent-input-row">
+                    <label>성명 :</label>
+                    <input type="text" name="human_name" required>
+                </div>
+                <div class="consent-input-row">
+                    <label>서명 또는 인 :</label>
+                    <input type="text" name="human_sign" required>
+                </div>
+                <p class="consent-text" style="font-size:12px; margin-top:2px; color:#666;">
+                    *피험자가 직접 서명할 수 없는 온라인 실험이므로, (서명 또는 인)란 오른쪽에 본인 이름을 타이핑할 시 연구자가 대리 서명하는 것에 동의한 것으로 간주합니다.
+                </p>
+                <div class="consent-input-row">
+                    <label>동의일자 :</label>
+                    <input type="text" name="human_date" placeholder="예: 20251203" required>
+                </div>
+            </div>
+        `,
+        button_label: "다음 (사례비 동의서로 이동)",
+        on_finish: function(data){
+            var resp = data.response;
+            
+            // 필수 동의 항목 체크
+            if(resp.human_main_collect.includes("동의하지")) {
+                jsPsych.endExperiment("필수 동의 항목에 동의하지 않으셔서, 행동실험에 참여하실 수 없습니다.\n참여 의사를 검토해 주셔서 감사합니다.");
+            }
+        }
+    };
+    timeline.push(consent_human);
+
+    // 1-2. 동의서 2: 개인정보 수집 이용 동의서 (사례비)
+    var consent_payment = {
+        type: jsPsychSurveyHtmlForm,
+        preamble: `
+            <div class="question-box">
+                <h1 class="main-title" style="text-align:center;">(사례비 지급 등)을 위한 개인정보 수집 및 활용 동의서</h1>
+                <p class="consent-text">
+                    다음은 행동실험 참여에 따른 사례비 지급을 위해 필요한 
+                    <strong>개인정보 수집 및 활용 동의서</strong>입니다.<br>
+                    아래의 동의서 전문(PDF 파일)을 스크롤하여 끝까지 읽어주세요.
+                </p>
+                <div class="pdf-box">
+                    <iframe src="documents/personal_info_consent.pdf"></iframe>
+                </div>
+                <p class="consent-text">
+                    아래는 동의서 중 <strong>핵심 정보</strong>를 요약한 것입니다.
+                    본 연구는 온라인으로 진행되므로, 응답을 제출하시면 본인은 전자적 방식(e-consent)으로 연구 참여 및 각 동의 항목에 동의하며, 
+                    이에 따라 연구자가 본 동의서의 동의 항목 및 서명란을 본인을 대신하여 기재하는 것에 동의한 것으로 간주됩니다.
+                </p>
+                <ul class="consent-text" style="list-style-position: inside;">
+                    <li>사례비 : <strong>10,000원 (실험 종료 후 3주 이내 지급)</strong></li>
+                </ul>
+                <p class="consent-text">
+                    사례비 지급을 위해 수집되는 개인정보는 다음과 같습니다.<br>
+                    성명, 주민등록번호, 연락처, 계좌번호(은행명 포함), 주소
+                </p>
+                <p class="consent-text">
+                    <strong>▣ 미동의시 불이익 내용 :</strong> 실험에 참여하실 수 없으며, 연구 참여에 따른 사례비를 지급을 받을 수 없습니다.
+                </p>
+            </div>
+        `,
+        html: `
+            <div class="question-box">
+                <div class="consent-section-title">[사례비 지급을 위한 개인정보 입력]</div>
+
+                <div class="consent-input-row">
+                    <label>성명 :</label>
+                    <input type="text" name="pay_name" required>
+                </div>
+                <div class="consent-input-row">
+                    <label>주민등록번호 :</label>
+                    <input type="text" name="pay_rrn" required>
+                </div>
+                
+                <div class="consent-input-row">
+                    <label>연락처 :</label>
+                    <input type="text" name="pay_phone" required>
+                </div>
+                <div class="consent-input-row">
+                    <label>은행명, 계좌번호 :</label>
+                    <input type="text" name="pay_bank_account" required>
+                </div>
+                <div class="consent-input-row">
+                    <label>주소 (동까지만 쓰셔도 됩니다) :</label>
+                    <input type="text" name="pay_addr" required>
+                </div>
+
+                <div class="consent-section-title" style="margin-top:14px;">[개인정보 수집 및 활용에 대한 동의]</div>
+                <p class="consent-text">
+                    본인은 위와 같이 본인의 개인정보에 대한 수집 및 활용에 대한 내용을 확인하였으며,
+                    개인정보 수집 및 활용에 대하여
+                </p>
+                <label style="display:block; margin-bottom:5px;">
+                    <input type="radio" name="payment_main_consent" value="동의합니다" required>
+                    ▶ 동의합니다.
+                </label>
+                <label style="display:block;">
+                    <input type="radio" name="payment_main_consent" value="동의하지 않습니다">
+                    ▶ 동의하지 않습니다. (실험 참여 불가)
+                </label>
+
+                <div class="consent-section-title" style="margin-top:14px;">[동의일자 및 서명]</div>
+                <div class="consent-input-row">
+                    <label>동의일자 (20 . . . ) :</label>
+                    <input type="text" name="pay_date" placeholder="예: 20251203" required>
+                </div>
+                <div class="consent-input-row">
+                    <label>피험자(동의자) 성명 :</label>
+                    <input type="text" name="pay_sign_name" required>
+                </div>
+                <div class="consent-input-row">
+                    <label>서명 :</label>
+                    <input type="text" name="pay_sign" required>
+                </div>
+                <p class="consent-text" style="font-size:12px; margin-top:2px; color:#666;">
+                    *피험자가 직접 서명할 수 없는 온라인 실험이므로, (서명)란 오른쪽에 본인 이름을 타이핑할 시
+                    연구자가 대리 서명하는 것에 동의한 것으로 간주합니다.
+                </p>
+            </div>
+        `,
+        button_label: "다음 (기초 정보 입력)",
+        on_finish: function(data){
+            var resp = data.response;
+            if(resp.payment_main_consent.startsWith("동의하지")){
+                jsPsych.endExperiment("사례비 지급을 위한 개인정보 수집·활용에 동의하지 않으셔서, 본 온라인 실험에 참여하실 수 없습니다.\n참여 의사를 검토해 주셔서 감사합니다.");
+            }
+        }
+    };
+    timeline.push(consent_payment);
+
 
     // --- Page 1: 기본 인적사항 ---
     var page_1_demographics = {
