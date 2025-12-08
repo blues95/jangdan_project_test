@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Groove & Rhythm Perception Experiment (C)</title>
+    
+    <!-- jsPsych 라이브러리 및 플러그인 로드 (unpkg 사용) -->
+    <script src="https://unpkg.com/jspsych@7.3.4"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-html-button-response@1.1.3"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-survey-text@1.1.3"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-survey-multi-choice@1.1.3"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-survey-likert@1.1.3"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-preload@1.1.3"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-survey-html-form@1.0.3"></script>
+    
+    <!-- [추가됨] DataPipe 플러그인 -->
+    <script src="https://unpkg.com/@jspsych-contrib/plugin-pipe"></script>
+    
+    <!-- jsPsych 스타일시트 -->
+    <link href="https://unpkg.com/jspsych@7.3.4/css/jspsych.css" rel="stylesheet" type="text/css" />
+    
+    <style>
+        /* 전체 페이지 스타일 */
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            line-height: 1.6;
+            background-color: #f0f2f5;
+            color: #333;
+        }
+        .jspsych-content {
+            max-width: 1000px;
+            margin: auto;
+            padding-bottom: 50px;
+        }
+
+        /* 질문 박스 디자인 */
+        .question-box {
+            background: #fff;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            text-align: left;
+        }
+
+        .question-text {
+            font-size: 1.1em;
+            font-weight: bold;
+            color: #222;
+            margin-bottom: 20px;
+            display: block;
+        }
+
+        .question-label {
+            font-weight: bold;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        /* --- Page 2: Eligibility Check Styles (Fixed) --- */
+        .jspsych-survey-multi-choice-question {
+            text-align: center;
+            margin-top: 20px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 20px;
+            margin-bottom: 20px;
+        }
+        .jspsych-survey-multi-choice-question:last-child {
+            border-bottom: none;
+        }
+
+        .jspsych-survey-multi-choice-text {
+            text-align: left;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+
+        /* 선택지 가로 정렬 (Inline-Flex) */
+        .jspsych-survey-multi-choice-option {
+            display: inline-flex !important; 
+            align-items: center;
+            justify-content: center;
+            margin: 0 40px !important;
+        }
+        
+        .jspsych-survey-multi-choice-option input {
+            margin-right: 8px;
+            cursor: pointer;
+            width: 18px;
+            height: 18px;
+        }
+        
+        .jspsych-survey-multi-choice-option label {
+            cursor: pointer;
+            font-size: 1.05em;
+        }
+
+        /* --- Custom Likert Style (Page 4) --- */
+        .likert-container {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            margin-top: 10px;
+            width: 100%;
+        }
+        
+        .likert-label-side {
+            font-size: 0.9em;
+            font-weight: bold;
+            color: #555;
+            white-space: nowrap; 
+            margin-bottom: 5px; 
+            width: 140px; 
+            flex-shrink: 0; 
+            text-align: center; 
+        }
+
+        .likert-options-group {
+            display: flex;
+            justify-content: space-between;
+            flex-grow: 1; 
+            margin: 0 10px;
+        }
+        
+        .likert-option {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            width: 100%; 
+        }
+        
+        .likert-num {
+            font-size: 0.85em;
+            color: #666;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+        
+        .likert-option input[type="radio"] {
+            margin: 0;
+            width: 20px; 
+            height: 20px;
+            cursor: pointer;
+        }
+
+        /* --- Slider Style (Trials) --- */
+        .slider-wrapper {
+            padding: 0 40px; 
+            margin-bottom: 30px; 
+            position: relative; 
+        }
+        input[type=range] {
+            width: 100%;
+            cursor: pointer;
+            margin: 15px 0;
+            height: 8px;
+            background: #e0e0e0;
+            border-radius: 5px;
+            outline: none;
+            -webkit-appearance: none;
+            display: block;
+        }
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #4a90e2; 
+            cursor: pointer;
+        }
+
+        /* 슬라이더 라벨 */
+        .slider-labels-container {
+            position: relative;
+            width: 100%;
+            height: 40px; 
+            margin-top: 5px;
+        }
+        
+        .slider-label-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: absolute;
+            top: 0;
+            white-space: nowrap; 
+            text-align: center;
+        }
+        
+        .slider-label-left {
+            left: 0;
+            transform: translateX(-50%);
+        }
+
+        .slider-label-right {
+            right: 0;
+            transform: translateX(50%);
+        }
+
+        .slider-num-bold {
+            font-size: 1.1em;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 2px;
+        }
+
+        /* 오디오 플레이어 영역 */
+        .audio-section {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            text-align: center;
+            border: 1px solid #ddd;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+        
+        /* 진행률 텍스트 스타일 */
+        .progress-text {
+            text-align: right;
+            color: #666;
+            font-size: 0.9em;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        .small-input { width: 80px; padding: 5px; }
+        input[type=text], select { padding: 8px; border: 1px solid #ccc; border-radius: 4px; }
+        textarea { padding: 10px; border: 1px solid #ccc; border-radius: 4px; resize: vertical; width: 100%; box-sizing: border-box;}
+    </style>
+</head>
+<body>
+    <div id="jspsych-target"></div>
+
+<script>
+    // 1. jsPsych 초기화 (상단 progress bar 활성화)
+    const jsPsych = initJsPsych({
+        show_progress_bar: true
+    });
+
+    // [중요] DataPipe용 랜덤 ID 생성
+    const subject_id = jsPsych.randomization.randomID(10);
+    const filename = `expC_${subject_id}.csv`;
+    
+    // 데이터에 subject_id 추가 (모든 행에 기록됨)
+    jsPsych.data.addProperties({
+        subject_id: subject_id
+    });
+
+    // 2. 타임라인 생성
+    var timeline = [];
+
+    // --- 본 실험 자극 목록 (Experiment C) ---
+    var main_stimuli = [
+        { stimulus: "stimuli/original/03_1_ori.mp3", type: "original" },
+        { stimulus: "stimuli/original/06_-1_ori.mp3", type: "original" },
+        { stimulus: "stimuli/original/09_19_ori.mp3", type: "original" },
+        { stimulus: "stimuli/original/12_-1_ori.mp3", type: "original" },
+        { stimulus: "stimuli/original/15_61_ori.mp3", type: "original" },
+        { stimulus: "stimuli/original/18_65_ori.mp3", type: "original" },
+        { stimulus: "stimuli/original/21_23_ori.mp3", type: "original" },
+        { stimulus: "stimuli/original/24_35_ori.mp3", type: "original" },
+        { stimulus: "stimuli/original/27_43_ori.mp3", type: "original" },
+        { stimulus: "stimuli/original/30_49_ori.mp3", type: "original" },
+        { stimulus: "stimuli/original/33_41_ori.mp3", type: "original" },
+        { stimulus: "stimuli/original/36_45_ori.mp3", type: "original" },
+        { stimulus: "stimuli/original/39_60_ori.mp3", type: "original" },
+        { stimulus: "stimuli/quantized/02_-1_quantized_velocity82.mp3", type: "quantized" },
+        { stimulus: "stimuli/quantized/05_-1_quantized_velocity82.mp3", type: "quantized" },
+        { stimulus: "stimuli/quantized/08_20_quantized_velocity82.mp3", type: "quantized" },
+        { stimulus: "stimuli/quantized/11_-1_quantized_velocity82.mp3", type: "quantized" },
+        { stimulus: "stimuli/quantized/14_-1_quantized_velocity82.mp3", type: "quantized" },
+        { stimulus: "stimuli/quantized/17_-1_quantized_velocity82.mp3", type: "quantized" },
+        { stimulus: "stimuli/quantized/20_32_quantized_velocity82.mp3", type: "quantized" },
+        { stimulus: "stimuli/quantized/23_42_quantized_velocity82.mp3", type: "quantized" },
+        { stimulus: "stimuli/quantized/26_33_quantized_velocity82.mp3", type: "quantized" },
+        { stimulus: "stimuli/quantized/29_-1_quantized_velocity82.mp3", type: "quantized" },
+        { stimulus: "stimuli/quantized/32_59_quantized_velocity82.mp3", type: "quantized" },
+        { stimulus: "stimuli/quantized/35_53_quantized_velocity82.mp3", type: "quantized" },
+        { stimulus: "stimuli/quantized/38_56_quantized_velocity82.mp3", type: "quantized" },
+        { stimulus: "stimuli/shigimsae/19_shigimsae.mp3", type: "shigimsae" },
+        { stimulus: "stimuli/shigimsae/23_shigimsae.mp3", type: "shigimsae" },
+        { stimulus: "stimuli/shigimsae/32_shigimsae.mp3", type: "shigimsae" },
+        { stimulus: "stimuli/shigimsae/39_shigimsae.mp3", type: "shigimsae" },
+        { stimulus: "stimuli/shigimsae/42_shigimsae.mp3", type: "shigimsae" },
+        { stimulus: "stimuli/shigimsae/45_shigimsae.mp3", type: "shigimsae" },
+        { stimulus: "stimuli/shigimsae/51_shigimsae.mp3", type: "shigimsae" },
+        { stimulus: "stimuli/shigimsae/56_shigimsae.mp3", type: "shigimsae" },
+        { stimulus: "stimuli/shigimsae/61_shigimsae.mp3", type: "shigimsae" },
+        { stimulus: "stimuli/shigimsae/67_shigimsae.mp3", type: "shigimsae" },
+        { stimulus: "stimuli/drum_stimuli/jangdan_drum_03_80bpm.mp3", type: "drum" },
+        { stimulus: "stimuli/drum_stimuli/jangdan_drum_06_80bpm.mp3", type: "drum" },
+        { stimulus: "stimuli/drum_stimuli/jangdan_drum_09_80bpm.mp3", type: "drum" },
+        { stimulus: "stimuli/drum_stimuli/jangdan_drum_12_80bpm.mp3", type: "drum" },
+        { stimulus: "stimuli/drum_stimuli/jangdan_drum_15_80bpm.mp3", type: "drum" },
+        { stimulus: "stimuli/drum_stimuli/jangdan_drum_18_80bpm.mp3", type: "drum" },
+        { stimulus: "stimuli/drum_stimuli/jangdan_drum_21_80bpm.mp3", type: "drum" },
+        { stimulus: "stimuli/drum_stimuli/jangdan_drum_24_80bpm.mp3", type: "drum" },
+        { stimulus: "stimuli/drum_stimuli/jangdan_drum_27_80bpm.mp3", type: "drum" },
+        { stimulus: "stimuli/drum_stimuli/jangdan_drum_30_80bpm.mp3", type: "drum" },
+        { stimulus: "stimuli/drum_stimuli/jangdan_drum_33_80bpm.mp3", type: "drum" },
+        { stimulus: "stimuli/drum_stimuli/jangdan_drum_36_80bpm.mp3", type: "drum" },
+        { stimulus: "stimuli/drum_stimuli/jangdan_drum_39_80bpm.mp3", type: "drum" },
+        { stimulus: "stimuli/drum_stimuli/jangdan_drum_42_80bpm.mp3", type: "drum" },
+        { stimulus: "stimuli/drum_stimuli/jangdan_drum_45_80bpm.mp3", type: "drum" },
+        { stimulus: "stimuli/drum_stimuli/jangdan_drum_48_80bpm.mp3", type: "drum" }
+    ];
+
+    // 연습 파일 제거하고 본 실험 파일만 로드
+    var all_audio = main_stimuli.map(a => a.stimulus);
+
+    // 3. Preload
+    var preload = {
+        type: jsPsychPreload,
+        audio: all_audio,
+        message: '실험 데이터를 로딩 중입니다. 잠시만 기다려주세요...',
+        show_detailed_errors: true,
+        continue_after_error: true
+    };
+    timeline.push(preload);
+
+    // --- Page 1: 기본 인적사항 ---
+    var page_1_demographics = {
+        type: jsPsychSurveyHtmlForm,
+        preamble: '<div class="question-box" style="text-align:center;"><h3>기본 인적사항</h3><p>아래 정보를 입력해주세요.</p></div>',
+        html: `
+            <div class="question-box">
+                <label class="question-label">이름</label>
+                <input type="text" name="name" required style="margin-bottom: 15px; width: 100%; box-sizing: border-box;"><br>
+                
+                <label class="question-label">만 나이</label>
+                <input type="number" name="age" class="small-input" required style="margin-bottom: 15px;"> 세<br>
+                
+                <label class="question-label">생년월일 (예: 1995.02.22)</label>
+                <input type="text" name="dob" placeholder="YYYY.MM.DD" required style="margin-bottom: 15px; width: 100%; box-sizing: border-box;"><br>
+                
+                <label class="question-label">성별</label>
+                <select name="gender" required style="width: 100%;">
+                    <option value="">선택하세요</option>
+                    <option value="male">남성</option>
+                    <option value="female">여성</option>
+                </select>
+            </div>
+        `,
+        button_label: '다음'
+    };
+    timeline.push(page_1_demographics);
+
+    // --- Page 2: 연구 참여자 적격성 검증표 ---
+    var page_2_eligibility = {
+        type: jsPsychSurveyHtmlForm,
+        preamble: '<div class="question-box" style="text-align:center;"><h3>연구 참여자 적격성 검증표</h3></div>',
+        html: `
+            <div class="question-box">
+                <p class="question-label">1. 만 20세 이상 64세 이하입니까?</p>
+                <label><input type="radio" name="eligibility_age" value="yes" required> 예</label>
+                <label><input type="radio" name="eligibility_age" value="no" style="margin-left: 20px;"> 아니오</label>
+                <br><br>
+
+                <p class="question-label">2. 청력 때문에 일상 생활에 장애를 겪습니까?</p>
+                <label><input type="radio" name="eligibility_hearing" value="yes" required> 예</label>
+                <label><input type="radio" name="eligibility_hearing" value="no" style="margin-left: 20px;"> 아니오</label>
+                <br><br>
+
+                <p class="question-label">3. 손 움직임의 불편함 때문에 일상 생활에 장애를 겪습니까?</p>
+                <label><input type="radio" name="eligibility_hand" value="yes" required> 예</label>
+                <label><input type="radio" name="eligibility_hand" value="no" style="margin-left: 20px;"> 아니오</label>
+                <br><br>
+
+                <p class="question-label">4. 과거 또는 현재 신경/정신 관련 질환을 겪은 적이 있습니까?</p>
+                <label><input type="radio" name="eligibility_neuro" value="yes" required> 예</label>
+                <label><input type="radio" name="eligibility_neuro" value="no" style="margin-left: 20px;"> 아니오</label>
+                <br><br>
+
+                <p class="question-label">5. 실험 참여 동의서에 서명하였습니까?<br><span style="font-weight:normal; font-size:0.9em;">(연구 시작 전에 반드시 선행되어야 합니다!)</span></p>
+                <label><input type="radio" name="consent" value="yes" required> 예 (동의합니다)</label>
+                <label><input type="radio" name="consent" value="no" style="margin-left: 20px;"> 아니오</label>
+            </div>
+        `,
+        button_label: '다음'
+    };
+    timeline.push(page_2_eligibility);
+
+    // --- Page 3: 음악 배경 관련 설문 ---
+    var page_3_music_bg = {
+        type: jsPsychSurveyHtmlForm,
+        preamble: '<div class="question-box" style="text-align:center;"><h3>음악 배경 관련 설문</h3></div>',
+        html: `
+            <div class="question-box">
+                <p class="question-label">1. 귀하의 음악 전공 여부를 선택해주세요.</p>
+                <label><input type="radio" name="music_major" value="yes" required> 예</label>
+                <label><input type="radio" name="music_major" value="no" style="margin-left: 10px;"> 아니오</label>
+                <br><br>
+
+                <p class="question-label">2. 현재 다룰 수 있는 악기(성악/보컬/소리 포함)는 무엇이 있나요? (전부 답변)</p>
+                <input type="text" name="instruments" style="width: 100%;" placeholder="예: 피아노, 기타, 보컬 등">
+                <br><br>
+
+                <p class="question-label">3. 지금까지 악기(성악/보컬/소리 포함)를 전문적으로 배우거나 훈련받은 기간은 총 몇 년인가요?</p>
+                <p style="font-size: 0.9em; color: gray;">(전문적 훈련의 기준: 예술 중고 또는 대학 전공 과정, 학원, 레슨 포함)</p>
+                <input type="number" name="training_years" class="small-input" required> 년
+            </div>
+        `,
+        button_label: '다음'
+    };
+    timeline.push(page_3_music_bg);
+
+    // --- Page 4: 국악 및 그루브 인식 ---
+    function createLikertHTML(questionText, name, leftLabel, rightLabel) {
+        let optionsHTML = '';
+        for (let i = 1; i <= 7; i++) {
+            optionsHTML += `
+                <div class="likert-option">
+                    <span class="likert-num">${i}</span>
+                    <input type="radio" name="${name}" value="${i}" required>
+                </div>
+            `;
+        }
+        return `
+            <div class="question-box">
+                <label class="question-text">${questionText}</label>
+                <div class="likert-container">
+                    <div class="likert-label-side">${leftLabel}</div>
+                    <div class="likert-options-group">
+                        ${optionsHTML}
+                    </div>
+                    <div class="likert-label-side">${rightLabel}</div>
+                </div>
+            </div>
+        `;
+    }
+
+    var page_4_groove_survey = {
+        type: jsPsychSurveyHtmlForm,
+        preamble: '<div class="question-box" style="text-align:center;"><h3>음악적 선호도 조사</h3></div>',
+        html: `
+            ${createLikertHTML("1. 국악(한국 전통 음악)에 대해서 얼마나 친숙한가요?", "gugak_familiarity", "전혀 친숙하지 않음", "매우 친숙함")}
+            ${createLikertHTML("2. 평소 국악을 얼마나 자주 듣나요?", "gugak_freq", "전혀 안 들음", "매우 자주 들음")}
+            ${createLikertHTML("3. 국악을 얼마나 좋아하나요?", "gugak_like", "전혀 좋아하지 않음", "매우 좋아함")}
+            ${createLikertHTML("4. 평소 그루브 기반 음악을 얼마나 자주 듣나요?<br><span style='font-size:0.8em; font-weight:normal;'>(재즈, 펑크, 소울, 힙합, EDM, 레게, 알앤비 등)</span>", "groove_freq", "전혀 안 들음", "매우 자주 들음")}
+            ${createLikertHTML("5. 그루브 기반 음악을 얼마나 좋아하나요?", "groove_like", "전혀 좋아하지 않음", "매우 좋아함")}
+        `,
+        button_label: '다음'
+    };
+    timeline.push(page_4_groove_survey);
+
+    var page_4_groove_def = {
+        type: jsPsychSurveyHtmlForm,
+        html: `
+            <div class="question-box">
+                <label class="question-text">본인이 생각하는 ‘그루브(Groove)’의 정의를 자유롭게 서술해주세요.</label>
+                <textarea name="groove_definition" rows="10" required></textarea>
+            </div>
+        `,
+        button_label: '다음'
+    };
+    timeline.push(page_4_groove_def);
+
+
+    // --- Page 5: 실험 시작 안내문 (연습 관련 문구 제거됨) ---
+    var page_5_instruction = {
+        type: jsPsychHtmlButtonResponse,
+        stimulus: `
+            <div class="question-box">
+                <h2>실험 시작 안내</h2>
+                <div class="instruction-text" style="font-size: 1.1em;">
+                    <p>지금부터 청취 실험을 시작합니다.</p>
+                    <p style="color: #d9534f; font-weight: bold;">조용한 장소에서 이어폰이나 헤드폰을 착용해주세요!!</p>
+                    <br>
+                    <p><b>실험 방법:</b></p>
+                    <p>1. 각 화면에서 <b>재생 버튼(▶)</b>을 눌러 음악을 들어주세요.</p>
+                    <p>2. 음악은 원하는 만큼 반복해서 들을 수 있습니다.</p>
+                    <p>3. 음악을 들으며 아래 5가지 질문에 대해 슬라이더를 움직여 응답해 주세요.</p>
+                    <br>
+                    <p>준비가 되셨다면 시작 버튼을 눌러주세요.</p>
+                </div>
+            </div>
+        `,
+        choices: ['실험 시작하기']
+    };
+    timeline.push(page_5_instruction);
+
+    // --- 시행(Trial) 생성 함수 ---
+    var create_slider_trial = function(timeline_vars) {
+        return {
+            type: jsPsychSurveyHtmlForm,
+            preamble: function() {
+                var current_audio = jsPsych.timelineVariable('stimulus');
+                
+                // 진행 상황 계산 (task: 'rating'으로 기록된 데이터 개수 + 1)
+                var completed_trials = jsPsych.data.get().filter({task: 'rating'}).count();
+                var total_trials = main_stimuli.length;
+                var current_trial_num = completed_trials + 1;
+
+                return `
+                    <div class="progress-text">진행률: ${current_trial_num} / ${total_trials}</div>
+                    <div class="audio-section">
+                        <p style="margin-bottom:10px; font-weight:bold; color:#555;">🎧 아래 재생 버튼을 눌러 리듬을 들어보세요</p>
+                        <audio controls controlsList="nodownload" src="${current_audio}" style="width: 100%; max-width: 400px;"></audio>
+                    </div>
+                `;
+            },
+            html: `
+                <!-- 1. 움직임 욕구 (구 4번) -->
+                <div class="question-box">
+                    <label class="question-text">1. 이 리듬/장단이 얼마나 몸을 움직이고 싶게 했나요?</label>
+                    <div class="slider-wrapper">
+                        <input type="range" name="move_desire" min="0" max="100" value="50" step="1">
+                        <div class="slider-labels-container">
+                            <div class="slider-label-item slider-label-left">
+                                <span class="slider-num-bold">0</span>
+                                <span>전혀 그렇지 않음</span> 
+                            </div>
+                            <div class="slider-label-item slider-label-right">
+                                <span class="slider-num-bold">100</span>
+                                <span>매우 그러함</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2. 즐거움 (구 5번) -->
+                <div class="question-box">
+                    <label class="question-text">2. 이 리듬/장단을 들으며 얼마나 즐거움을 느꼈습니까?</label>
+                    <div class="slider-wrapper">
+                        <input type="range" name="enjoyment" min="0" max="100" value="50" step="1">
+                        <div class="slider-labels-container">
+                            <div class="slider-label-item slider-label-left">
+                                <span class="slider-num-bold">0</span>
+                                <span>전혀 즐겁지 않음</span>
+                            </div>
+                            <div class="slider-label-item slider-label-right">
+                                <span class="slider-num-bold">100</span>
+                                <span>매우 즐거움</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 3. 복잡성 (구 1번) -->
+                <div class="question-box">
+                    <label class="question-text">3. 이 리듬/장단이 얼마나 복잡하게 느껴졌나요?</label>
+                    <div class="slider-wrapper">
+                        <input type="range" name="complexity" min="0" max="100" value="50" step="1">
+                        <div class="slider-labels-container">
+                            <div class="slider-label-item slider-label-left">
+                                <span class="slider-num-bold">0</span>
+                                <span>매우 단순함</span>
+                            </div>
+                            <div class="slider-label-item slider-label-right">
+                                <span class="slider-num-bold">100</span>
+                                <span>매우 복잡함</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 4. 예측 가능성 (구 2번) -->
+                <div class="question-box">
+                    <label class="question-text">4. 연주되는 타이밍을 얼마나 예측할 수 있었나요?</label>
+                    <div class="slider-wrapper">
+                        <input type="range" name="predictability" min="0" max="100" value="50" step="1">
+                        <div class="slider-labels-container">
+                            <div class="slider-label-item slider-label-left">
+                                <span class="slider-num-bold">0</span>
+                                <span>전혀 예측 불가</span>
+                            </div>
+                            <div class="slider-label-item slider-label-right">
+                                <span class="slider-num-bold">100</span>
+                                <span>매우 쉽게 예측</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 5. 움직임 용이성 (구 3번) -->
+                <div class="question-box">
+                    <label class="question-text">5. 이 리듬/장단에 맞춰 몸을 움직이는 것이 얼마나 쉬웠나요?</label>
+                    <div class="slider-wrapper">
+                        <input type="range" name="move_ease" min="0" max="100" value="50" step="1">
+                        <div class="slider-labels-container">
+                            <div class="slider-label-item slider-label-left">
+                                <span class="slider-num-bold">0</span>
+                                <span>매우 어려움</span>
+                            </div>
+                            <div class="slider-label-item slider-label-right">
+                                <span class="slider-num-bold">100</span>
+                                <span>매우 쉬움</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `,
+            button_label: '다음',
+            data: {
+                task: 'rating',
+                stim_type: jsPsych.timelineVariable('type'),
+                stim_file: jsPsych.timelineVariable('stimulus')
+            },
+            on_load: function() {
+                window.scrollTo(0,0);
+            }
+        };
+    };
+
+    // --- 본 실험(Main) 블록 ---
+    var main_procedure = {
+        timeline: [create_slider_trial(main_stimuli)],
+        timeline_variables: main_stimuli,
+        randomize_order: true
+    };
+    timeline.push(main_procedure);
+
+    // [중요] 5. DataPipe 저장 단계
+    const save_data = {
+        type: jsPsychPipe,
+        action: "save",
+        experiment_id: "yV3jBYdQkH67", // ★ 사용자분의 DataPipe 실험 ID로 변경 필요 ★
+        filename: filename,
+        // [수정] OSF 저장 시 한글 깨짐 방지를 위해 BOM(\uFEFF) 문자 추가
+        data_string: () => "\uFEFF" + jsPsych.data.get().csv()
+    };
+    timeline.push(save_data);
+
+    // --- Page 9: 종료 ---
+    var end_experiment = {
+        type: jsPsychHtmlButtonResponse,
+        stimulus: `
+            <div class="question-box" style="text-align:center;">
+                <h2>실험이 모두 종료되었습니다.</h2>
+                <p>데이터가 안전하게 저장되었습니다.</p>
+                <p>참여해 주셔서 대단히 감사합니다.</p>
+                <p>이제 창을 닫으셔도 됩니다.</p>
+            </div>
+        `,
+        choices: ['종료']
+    };
+    timeline.push(end_experiment);
+
+    // 4. 실험 시작
+    jsPsych.run(timeline);
+
+</script>
+</body>
+</html>
