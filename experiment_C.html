@@ -403,7 +403,7 @@
         type: jsPsychSurveyHtmlForm,
         preamble: `
             <div class="question-box">
-                <h1 class="main-title" style="text-align:center;">인간대상 연구피험자 동의서</h1>
+                <h1 class="main-title" style="text-align:center;">인간대상연구 피험자 동의서</h1>
                 <p class="consent-text">
                     먼저, 아래의 <strong>인간대상 연구피험자 동의서 전문(PDF 파일)</strong>을 스크롤하여 끝까지 읽어주세요.
                 </p>
@@ -536,7 +536,7 @@
         type: jsPsychSurveyHtmlForm,
         preamble: `
             <div class="question-box">
-                <h1 class="main-title" style="text-align:center;">(사례비 지급 등)을 위한 개인정보 수집 및 활용 동의서</h1>
+                <h1 class="main-title" style="text-align:center;">(사례비 지급 등)을 위한 개인정보 수집 및 활용에 대한 동의서</h1>
                 <p class="consent-text">
                     다음은 행동실험 참여에 따른 사례비 지급을 위해 필요한 
                     <strong>개인정보 수집 및 활용 동의서</strong>입니다.<br>
@@ -694,23 +694,37 @@
     };
     timeline.push(page_2_eligibility);
 
-    // --- Page 3: 음악 배경 관련 설문 ---
+    // --- Page 3: 음악 배경 관련 설문 (수정됨) ---
     var page_3_music_bg = {
         type: jsPsychSurveyHtmlForm,
         preamble: '<div class="question-box" style="text-align:center;"><h3>음악 배경 관련 설문</h3></div>',
         html: `
             <div class="question-box">
                 <p class="question-label">1. 귀하의 음악 전공 여부를 선택해주세요.</p>
-                <label><input type="radio" name="music_major" value="yes" required> 예</label>
-                <label><input type="radio" name="music_major" value="no" style="margin-left: 10px;"> 아니오</label>
-                <br><br>
+                <div style="margin-left: 5px;">
+                    <label style="display:block; margin-bottom:5px;">
+                        <input type="radio" name="music_major" value="none" required> 음악 전공이 아님
+                    </label>
+                    <label style="display:block; margin-bottom:5px;">
+                        <input type="radio" name="music_major" value="gugak"> 국악 전공
+                    </label>
+                    <label style="display:block; margin-bottom:5px;">
+                        <input type="radio" name="music_major" value="classic"> 클래식 전공
+                    </label>
+                    <label style="display:block; margin-bottom:15px;">
+                        <input type="radio" name="music_major" value="applied"> 실용음악 전공
+                    </label>
+                </div>
 
                 <p class="question-label">2. 현재 다룰 수 있는 악기(성악/보컬/소리 포함)는 무엇이 있나요? (전부 답변)</p>
-                <input type="text" name="instruments" style="width: 100%;" placeholder="예: 피아노, 기타, 보컬 등">
+                <p style="font-size: 0.9em; color: #2c3e50; margin-top:-5px; margin-bottom:8px; background-color: #f1f8ff; padding: 5px; border-radius: 4px;">
+                    ※ <b>가장 주되게 다루는 악기</b>를 <b>맨 처음</b>에 적어주세요.
+                </p>
+                <input type="text" name="instruments" style="width: 100%;" placeholder="예: 피아노, 기타, 보컬 등 (주 악기부터 작성)" required>
                 <br><br>
 
                 <p class="question-label">3. 지금까지 악기(성악/보컬/소리 포함)를 전문적으로 배우거나 훈련받은 기간은 총 몇 년인가요?</p>
-                <p style="font-size: 0.9em; color: gray;">(전문적 훈련의 기준: 예술 중고 또는 대학 전공 과정, 학원, 레슨 포함)</p>
+                <p style="font-size: 0.9em; color: gray; margin-top:-5px;">(전문적 훈련의 기준: 예술 중고 또는 대학 전공 과정, 학원, 레슨 포함)</p>
                 <input type="number" name="training_years" class="small-input" required> 년
             </div>
         `,
